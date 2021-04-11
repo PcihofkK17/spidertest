@@ -63,3 +63,9 @@
 /target/classes/com/jd/data/App.class
 /target/classes/com/jd/data/Process1.class
 /target/test-classes/com/jd/data/AppTest.class
+/target/
+/.classpath
+/.project
+/.settings/org.eclipse.core.resources.prefs
+/.settings/org.eclipse.jdt.core.prefs
+/.settings/org.eclipse.m2e.core.prefs

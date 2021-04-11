@@ -19,11 +19,11 @@ import java.util.Map;
  */
 public class Process1 implements PageProcessor {
 
-    private String  cat_url_tmp="http://www.jyeoo.com/math3/ques/partialcategory?a=AA";
-    private String  ti_url_tmp="http://www.jyeoo.com/math3/ques/partialques?q=AA";
+    private String  cat_url_tmp="http://www.jyeoo.com/physics/ques/partialcategory?a=AA";
+    private String  ti_url_tmp="http://www.jyeoo.com/physics/ques/partialques?q=AA";
     public void process(Page page) {
         String url = page.getUrl().get();
-        if(url.matches("http://www.jyeoo.com/math3/ques/search.*")){
+        if(url.matches("http://www.jyeoo.com/.*?/ques/search.*")){
             //科目
             Map<String , String > bMap=new HashMap<String, String>();
             List<Selectable> nodes = page.getHtml().xpath("//tr[@class='JYE_EDITION']//a[@data-id]").nodes();
@@ -40,11 +40,11 @@ public class Process1 implements PageProcessor {
                 String uuid = node.xpath("//a/@onclick").regex("this,\\d+,\\d+,\\d+,\\'(.*?)\\'").get();
                 String name = node.xpath("//a/text()").get();
 
-                System.out.println(name+"------"+bMap.get(bCode)+"------------"+uuid);
                 String catUrl = cat_url_tmp.replace("AA", uuid);
+                System.out.println(name+"------"+bMap.get(bCode)+"------------"+uuid+"----------"+catUrl);
                 page.addTargetRequest(catUrl);
             }
-        }else if(url.matches("http://www.jyeoo.com/math3/ques/partialcategory.*")){
+        }else if(url.matches("http://www.jyeoo.com/.*?/ques/partialcategory.*")){
             //各个版本
             String rawText = page.getRawText();
             Document doc = Jsoup.parseBodyFragment(rawText);
@@ -81,7 +81,9 @@ public class Process1 implements PageProcessor {
     }
 
     public static void main(String[] args) {
-       String  url="http://www.jyeoo.com/math3/ques/partialcategory?a=024b8319-d250-46b6-84c6-10121cd6b770&q=024b8319-d250-46b6-84c6-10121cd6b770~3709c351-62c9-4d52-9678-028662a78fc0~";//从章节列表借口
+//       String  url="http://www.jyeoo.com/math3/ques/partialcategory?a=024b8319-d250-46b6-84c6-10121cd6b770&q=024b8319-d250-46b6-84c6-10121cd6b770~3709c351-62c9-4d52-9678-028662a78fc0~";//从章节列表借口
+        String  url="http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //二级章节
+//       String url="http://www.jyeoo.com/physics/ques/search"; //物理
 //        String  url="http://www.jyeoo.com/math3/ques/search?f=0"; //科目
         Spider.create(new Process1())
                 .test(url);
