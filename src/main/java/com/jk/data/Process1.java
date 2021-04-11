@@ -1,4 +1,4 @@
-package com.jd.data;
+package com.jk.data;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,4 +1,4 @@
-package com.jd.data;
+package com.jk.data;
 
 import org.apache.commons.io.FileUtils;
 
