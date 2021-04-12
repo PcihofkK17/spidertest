@@ -10,6 +10,7 @@ public class JBean {
 
     private String  pk;
     private String  name;
+    private List<JBean> jBeans2=new ArrayList<JBean>();
     private List<ZSBean> zsBeans=new ArrayList<ZSBean>();
 
 
@@ -49,5 +50,18 @@ public class JBean {
                 ", name='" + name + '\'' +
                 ", zsBeans=" + zsBeans +
                 '}';
+    }
+
+    public void addJBeans2(JBean jBean){
+        jBeans2.add(jBean);
+
+    }
+
+    public List<JBean> getjBeans2() {
+        return jBeans2;
+    }
+
+    public void setjBeans2(List<JBean> jBeans2) {
+        this.jBeans2 = jBeans2;
     }
 }

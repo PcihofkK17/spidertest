@@ -53,36 +53,61 @@ public class Process2 implements PageProcessor {
             Document doc = Jsoup.parseBodyFragment(rawText);
             Elements lis = doc.select("ul.treeview>li");
 
-            List<ZBean> zBeans=new ArrayList<ZBean>();
+            List<ZBean> zBeans = new ArrayList<ZBean>();
             for (Element li : lis) {
                 String zhText = li.select("li>a").first().text();
                 String zpk = li.select("li>a[pk$=~]").first().attr("pk").split("~")[0];
                 Elements lis2 = li.select("li>a[pk$=~]:contains(章)+ul>li");
                 System.out.println(zpk + "-------章节---------" + zhText);
 
-                ZBean zBean=new ZBean();
+                ZBean zBean = new ZBean();
                 zBean.setName(zhText);
                 zBean.setPk(zpk);
+
 
                 for (Element element : lis2) {
                     String pk = element.select("li>a").attr("pk");
                     String name = element.select("li>a").first().text();
 
-                    JBean jBean=new JBean();
+                    JBean jBean = new JBean();
                     jBean.setPk(pk);
                     jBean.setName(name);
 
-                    Elements lis3 = element.select("li>ul>li>a");
+
+                    System.out.println(pk + "------节点------" + name);
+                    Elements lis3 = element.select("li>ul>li");
                     for (Element element1 : lis3) {
-                        String pk1 = element1.attr("pk");
-                        String zname = element1.text();
-                        System.out.println(pk1+"------知识点------"+zname);
+                        String pk1 = element1.select("li>a").attr("pk");
+                        String zname = element1.select("li>a").first().text();
+                        if (pk1.endsWith("~")) {
 
-                        ZSBean zsBean=new ZSBean();
-                        zsBean.setPk(pk1);
-                        zsBean.setName(zname);
 
-                        jBean.addZsBean(zsBean);
+                            Elements as3 = element1.select("li>ul>li>a");
+                            System.out.println(pk1 + "------二级节点------" + zname);
+
+                           JBean jBean2= new JBean();
+                           jBean2.setPk(pk1);
+                           jBean2.setName(zname);
+                            for (Element element2 : as3) {
+                                String pk2 = element2.attr("pk");
+                                String name2 = element2.text();
+                                System.out.println(pk2+"------知识点-------"+name2);
+
+                                ZSBean zsBean = new ZSBean();
+                                zsBean.setPk(pk2);
+                                zsBean.setName(zname);
+                                jBean2.addZsBean(zsBean);
+                            }
+                            jBean.addJBeans2(jBean2);
+                        } else {
+                            System.out.println(pk1 + "------知识点------" + zname);
+                            ZSBean zsBean = new ZSBean();
+                            zsBean.setPk(pk1);
+                            zsBean.setName(zname);
+
+                            jBean.addZsBean(zsBean);
+                        }
+
                     }
                     zBean.addJbean(jBean);
                 }
@@ -93,12 +118,12 @@ public class Process2 implements PageProcessor {
 
             String jsonStr = JsonUtils.obj2Str(zBeans);
             System.out.println(jsonStr);
+
         }
-        if (url.matches("http://www.jyeoo.com/math3/ques/partialques.*")) {
+        if (url.matches("http://www.jyeoo.com/.*?/ques/partialques.*")) {
             //题目
             System.out.println(page.getUrl().get() + "--------------Turl");
         }
-
 
     }
 
@@ -109,9 +134,10 @@ public class Process2 implements PageProcessor {
 
     public static void main(String[] args) {
 //       String  url="http://www.jyeoo.com/math3/ques/partialcategory?a=024b8319-d250-46b6-84c6-10121cd6b770&q=024b8319-d250-46b6-84c6-10121cd6b770~3709c351-62c9-4d52-9678-028662a78fc0~";//从章节列表借口
-        String url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //二级章节
-//       String url="http://www.jyeoo.com/physics/ques/search"; //物理
-//        String  url="http://www.jyeoo.com/math3/ques/search?f=0"; //科目
+        String url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949";
+//        String url = "http://www.jyeoo.com/math2/ques/partialcategory?a=b6174fb4-1c52-4186-a1d0-a79ec6087045&q=b6174fb4-1c52-4186-a1d0-a79ec6087045~acfe19cd-7319-4d79-8409-54462213d84d~&f=0&r=0.2373003228014412";
+//      String url="http://www.jyeoo.com/physics/ques/search"; //物理
+//        String  url="http://www.jyeoo.com/math2/ques/search"; //科目
         Spider.create(new Process2())
                 .test(url);
     }
