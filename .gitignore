@@ -69,3 +69,7 @@
 /.settings/org.eclipse.core.resources.prefs
 /.settings/org.eclipse.jdt.core.prefs
 /.settings/org.eclipse.m2e.core.prefs
+/.idea/uiDesigner.xml
+/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_7_0.xml
+/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_7_0.xml
+/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_7_0.xml
