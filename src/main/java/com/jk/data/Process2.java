@@ -1,5 +1,6 @@
 package com.jk.data;
 
+import com.jk.data.com.jk.data.util.JsonUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Created by 76204 on 2017/6/29.
  */
-public class Process1 implements PageProcessor {
+public class Process2 implements PageProcessor {
 
     private String cat_url_tmp = "http://www.jyeoo.com/physics/ques/partialcategory?a=AA";
     private String ti_url_tmp = "http://www.jyeoo.com/physics/ques/partialques?q=AA";
@@ -52,48 +53,55 @@ public class Process1 implements PageProcessor {
             Document doc = Jsoup.parseBodyFragment(rawText);
             Elements lis = doc.select("ul.treeview>li");
 
-
-            Map<String, String> map1 = new HashMap<String, String>(); //章
-            Map<String, String> map2 = new HashMap<String, String>(); //节
-
+            List<ZBean> zBeans=new ArrayList<ZBean>();
             for (Element li : lis) {
-
-
                 String zhText = li.select("li>a").first().text();
-                String zpk = li.select("li>a").first().attr("pk").split("~")[0];
-                Elements as = li.select("li>ul>li>a");
+                String zpk = li.select("li>a[pk$=~]").first().attr("pk").split("~")[0];
+                Elements lis2 = li.select("li>a[pk$=~]:contains(章)+ul>li");
+                System.out.println(zpk + "-------章节---------" + zhText);
 
-                map1.put(zpk, zhText);
+                ZBean zBean=new ZBean();
+                zBean.setName(zhText);
+                zBean.setPk(zpk);
 
-//                if(as.size()==0){
-//                    continue;
-//                }
+                for (Element element : lis2) {
+                    String pk = element.select("li>a").attr("pk");
+                    String name = element.select("li>a").first().text();
 
-                System.out.println(zhText + "-------" + zpk);
-                for (Element a : as) {
-                    String pk = a.attr("pk");
-                    String name = a.text();
-                    if (pk.endsWith("~")) {
-                        map2.put(pk, name);
-                    } else {
-                        String tUrl = ti_url_tmp.replace("AA", pk);
-                        String str = pk.replaceAll("[0-9A-Z]+$", "");
-                        System.out.println(zhText + "-----" + map2.get(str) + "-------------" + name + "------" + tUrl);
-                        page.addTargetRequest(tUrl);
+                    JBean jBean=new JBean();
+                    jBean.setPk(pk);
+                    jBean.setName(name);
 
+                    Elements lis3 = element.select("li>ul>li>a");
+                    for (Element element1 : lis3) {
+                        String pk1 = element1.attr("pk");
+                        String zname = element1.text();
+                        System.out.println(pk1+"------知识点------"+zname);
+
+                        ZSBean zsBean=new ZSBean();
+                        zsBean.setPk(pk1);
+                        zsBean.setName(zname);
+
+                        jBean.addZsBean(zsBean);
                     }
-
-
+                    zBean.addJbean(jBean);
                 }
+                zBeans.add(zBean);
+
             }
-            if (url.matches("http://www.jyeoo.com/math3/ques/partialques.*")) {
-                //题目
-                System.out.println(page.getUrl().get() + "--------------Turl");
-            }
+            System.out.println(zBeans);
+
+            String jsonStr = JsonUtils.obj2Str(zBeans);
+            System.out.println(jsonStr);
+        }
+        if (url.matches("http://www.jyeoo.com/math3/ques/partialques.*")) {
+            //题目
+            System.out.println(page.getUrl().get() + "--------------Turl");
         }
 
 
     }
+
 
     public Site getSite() {
         return Site.me();
@@ -104,7 +112,7 @@ public class Process1 implements PageProcessor {
         String url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //二级章节
 //       String url="http://www.jyeoo.com/physics/ques/search"; //物理
 //        String  url="http://www.jyeoo.com/math3/ques/search?f=0"; //科目
-        Spider.create(new Process1())
+        Spider.create(new Process2())
                 .test(url);
     }
 }
