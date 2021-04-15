@@ -36,7 +36,6 @@ public class Process2 implements PageProcessor {
             }
         }else  if (url.matches("http://www.jyeoo.com/.*?/ques/search.*")) {
             //科目
-//            System.out.println(page.getRawText());
             Map<String, String> bMap = new HashMap<String, String>();
             List<Selectable> nodes = page.getHtml().xpath("//tr[@class='JYE_EDITION']//a[@data-id]").nodes();
             for (Selectable node : nodes) {
@@ -54,7 +53,7 @@ public class Process2 implements PageProcessor {
 
 
                 String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
-               String   catUrl=uri+"/partialcategory?a="+uuid;
+               String   catUrl=uri+"partialcategory?a="+uuid;
 //                String catUrl = cat_url_tmp.replace("AA", uuid);
                 System.out.println(name + "------" + bMap.get(bCode) + "------------" + uuid + "----------" + catUrl);
                 page.addTargetRequest(catUrl);
@@ -112,7 +111,7 @@ public class Process2 implements PageProcessor {
 
                                 String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
                                String  nUrl= uri+"partialques?q="+pk2;
-                               page.addTargetRequest(nUrl);
+//                               page.addTargetRequest(nUrl);
                             }
                             jBean.addJBeans2(jBean2);
                         } else {
@@ -125,7 +124,7 @@ public class Process2 implements PageProcessor {
 
                             String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
                             String  nUrl= uri+"partialques?q="+pk1;
-                            page.addTargetRequest(nUrl);
+//                            page.addTargetRequest(nUrl);
                         }
 
                     }
@@ -146,11 +145,11 @@ public class Process2 implements PageProcessor {
         }
 
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -163,8 +162,9 @@ public class Process2 implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        String url = "http://www.jyeoo.com/math2/ques/search"; //科目
+        String url = "http://www.jyeoo.com/math/ques/search"; //科目
         url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
+        url="http://www.jyeoo.com/math/ques/partialcategory?a=75a08844-6562-4bf5-a182-034cf7929588";
 //        url="http://www.jyeoo.com/";
 //        url="http://www.jyeoo.com/math0/ques/search";
         Spider
