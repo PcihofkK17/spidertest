@@ -1,6 +1,10 @@
 package com.jk.data;
 
 import com.jk.data.com.jk.data.util.JsonUtils;
+import com.jk.data.mybatis.AppUtils;
+import com.jk.data.mybatis.bean.RelateBook;
+import com.jk.data.mybatis.dao.RelateBookDao;
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,6 +15,8 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Selectable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +30,14 @@ public class Process2 implements PageProcessor {
     private String cat_url_tmp = "http://www.jyeoo.com/math2/ques/partialcategory?a=AA";
     private String ti_url_tmp = "http://www.jyeoo.com/physics/ques/partialques?q=AA";
     private static final String  userAgent="Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36";
+
+    private Map<String ,String > myDic=new HashMap<String, String>();
+    private Map<String ,String > grade_course_map=new HashMap<String, String>();
+
+    private static  RelateBookDao relateBookDao = AppUtils.daoFactory(RelateBookDao.class);
+
     public void process(Page page) {
+
         String url = page.getUrl().get();
         if(url.matches("http://www.jyeoo.com/")){
             List<Selectable> nodes = page.getHtml().xpath("//a[contains(@href,'ques/search')]").nodes();
@@ -56,7 +69,41 @@ public class Process2 implements PageProcessor {
                String   catUrl=uri+"partialcategory?a="+uuid;
 //                String catUrl = cat_url_tmp.replace("AA", uuid);
                 System.out.println(name + "------" + bMap.get(bCode) + "------------" + uuid + "----------" + catUrl);
-                page.addTargetRequest(catUrl);
+//                page.addTargetRequest(catUrl);
+
+                String  gcInfo=grade_course_map.get(url);
+
+
+                //id拼接
+                String grandId = myDic.get(gcInfo.split(" ")[0]);
+                String siteId = myDic.get("菁优网");
+                String courseId = myDic.get(gcInfo.split(" ")[1]);
+                String branchId = myDic.get(bMap.get(bCode));
+                String termId = myDic.get(name);
+                String  bookId="F00";
+                if("初中 英语".equals(gcInfo)){
+                    branchId="D00";
+                }
+
+                String id=grandId+siteId+courseId+branchId+termId+bookId;
+                if(branchId==null || termId==null){
+                    System.out.println(bMap.get(bCode)+"---漏掉----");
+                }
+                if(grandId!=null && siteId!=null && courseId!=null && branchId!=null && termId!=null && bookId!=null ){
+
+                    RelateBook relateBook = new RelateBook();
+                    relateBook.setId(id);
+                    relateBook.setGradeId(grandId);
+                    relateBook.setSiteId(siteId);
+                    relateBook.setCourseId(courseId);
+                    relateBook.setBranchId(branchId);
+                    relateBook.setTermId(termId);
+                    relateBook.setBookId(bookId);
+                  relateBookDao.add(relateBook);
+                }
+                System.out.println(grandId+"---"+siteId+"----"+courseId+"----"+branchId+"----"+termId+"----"+bookId);
+
+
             }
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/partialcategory.*")) {
             //各个版本
@@ -154,6 +201,9 @@ public class Process2 implements PageProcessor {
 
 
     public Site getSite() {
+
+        myDic=readDic();
+        grade_course_map=readGradecourse();
         return Site
                 .me()
                 .setUserAgent(userAgent)
@@ -164,7 +214,23 @@ public class Process2 implements PageProcessor {
     public static void main(String[] args) {
         String url = "http://www.jyeoo.com/math/ques/search"; //科目
         url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
-        url="http://www.jyeoo.com/math/ques/partialcategory?a=75a08844-6562-4bf5-a182-034cf7929588";
+        url="http://www.jyeoo.com/math/ques/search"; //初中数学
+        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
+        url="http://www.jyeoo.com/chemistry/ques/search"; //初中化学
+        url="http://www.jyeoo.com/geography/ques/search"; //初中地理
+        url="http://www.jyeoo.com/english/ques/search"; //初中英语
+//        url="http://www.jyeoo.com/chinese/ques/search"; //初中语文
+//        url="http://www.jyeoo.com/history/ques/search"; //初中历史
+//        url="http://www2.jyeoo.com/science/ques/search"; //初中科学
+//        url="http://www.jyeoo.com/math2/ques/search"; //高中数学
+//        url="http://www.jyeoo.com/physics2/ques/search"; //高中物理
+//        url="http://www.jyeoo.com/chemistry2/ques/search"; //高中化学
+//        url="http://www.jyeoo.com/geography2/ques/search"; //高中地理
+//        url="http://www.jyeoo.com/english2/ques/search"; //高中英语
+//        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文
+//        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
+//        url="http://www.jyeoo.com/math3/ques/search"; //小学数学
+//        url="http://www.jyeoo.com/math0/ques/search"; //小学奥数
 //        url="http://www.jyeoo.com/";
 //        url="http://www.jyeoo.com/math0/ques/search";
         Spider
@@ -173,5 +239,44 @@ public class Process2 implements PageProcessor {
 
                 .run();
 //                .test(url);
+    }
+
+
+    /**
+     * 读取编码配置
+     * @return
+     */
+    private static  Map<String,String> readDic() {
+        Map<String,String> dicMap=new HashMap<String, String>();
+        try {
+            List<String> list = FileUtils.readLines(new File("./Mydic.txt"), "utf-8");
+            for (String each : list) {
+                String code = each.split("\t")[0];
+                String name = each.split("\t")[1];
+                dicMap.put(name,code);
+            }
+//            System.out.println(list);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dicMap;
+    }
+    private static  Map<String,String> readGradecourse() {
+        Map<String,String> dicMap=new HashMap<String, String>();
+        try {
+            List<String> list = FileUtils.readLines(new File("./grade_course.txt"), "utf-8");
+            for (String each : list) {
+                String url = each.split(" ")[0];
+                String grade = each.split(" ")[1];
+                String course = each.split(" ")[2];
+                dicMap.put(url,grade+" "+course);
+            }
+//            System.out.println(list);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dicMap;
     }
 }
