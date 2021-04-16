@@ -74,3 +74,5 @@
 /.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_7_0.xml
 /.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_7_0.xml
 /.idea
+/logs/newsSpider.log
+/logs/newsSpider.log.2017-07-03
