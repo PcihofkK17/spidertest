@@ -13,5 +13,6 @@ http://www.jyeoo.com/geography2/ques/search 高中 地理
 http://www.jyeoo.com/english2/ques/search 高中 英语
 http://www.jyeoo.com/chinese2/ques/search 高中 语文
 http://www.jyeoo.com/history2/ques/search 高中 历史
+http://www.jyeoo.com/politics2/ques/search 高中 政治
 http://www.jyeoo.com/math3/ques/search 小学 数学
 http://www.jyeoo.com/math0/ques/search 小学 奥数

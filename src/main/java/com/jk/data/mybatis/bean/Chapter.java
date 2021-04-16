@@ -64,4 +64,16 @@ public class Chapter {
 
         return knowledgeTag;
     }
+
+    @Override
+    public String toString() {
+        return "Chapter{" +
+                "id='" + id + '\'' +
+                ", relateBookId='" + relateBookId + '\'' +
+                ", name='" + name + '\'' +
+                ", level=" + level +
+                ", pk='" + pk + '\'' +
+                ", knowledgeTag=" + knowledgeTag +
+                '}';
+    }
 }
