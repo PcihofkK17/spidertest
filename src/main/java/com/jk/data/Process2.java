@@ -21,10 +21,7 @@ import us.codecraft.webmagic.selector.Selectable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 76204 on 2017/6/29.
@@ -44,6 +41,8 @@ public class Process2 implements PageProcessor {
     private static ChapterDao chapterDao = AppUtils.daoFactory(ChapterDao.class);
     private static QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
 
+
+
     public void process(Page page) {
 
         String url = page.getUrl().get();
@@ -57,6 +56,35 @@ public class Process2 implements PageProcessor {
             }
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/search.*")) {
             //科目
+
+            //题型 难度 来源
+            List<Selectable> trs = page.getHtml().xpath("//table[@class='degree']/tbody/tr").nodes();
+            for (Selectable tr : trs) {
+                String type = tr.xpath("/tr/th/text()").get();
+                List<Selectable> as = tr.xpath("/tr/td/ul/li/a").nodes();
+                for (Selectable a : as) {
+                    String code = a.regex("set.*?\\(this,(\\d+)\\)", 1).get();
+                    String name = a.xpath("/a/text()").get();
+                    if("0".equals(code)){
+                        continue;
+                    }
+
+                    String id = myDic.get(name.replaceAll(" ",""));
+                    QuestLabelWord questLabelWord = new QuestLabelWord();
+                    questLabelWord.setId(id);
+                    questLabelWord.setValue(code);
+                    if(id!=null && code!=null){
+                        System.out.println("--更新----"+id+"---"+name+"------"+type+"-------"+code+"----"+url);
+//                        questLabelWordDao.updateWord(questLabelWord);
+                    }else{
+                        System.out.println("--没有更新----"+name+"------"+type+"-------"+code+"---"+url);
+                    }
+//                    System.out.println("*----*"+id+"\t"+type+"\t"+name+"\t"+code);
+
+                }
+
+            }
+
             String gcInfo = grade_course_map.get(url);
             Map<String, String> bMap = new HashMap<String, String>(); //版本集合
             String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
@@ -455,25 +483,27 @@ public class Process2 implements PageProcessor {
 
     public static void main(String[] args) {
         String url = "http://www.jyeoo.com/math/ques/search"; //科目
-        url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
+        url="http://www.jyeoo.com/";
+//        url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
 //        url = "http://www.jyeoo.com/math/ques/search"; //初中数学
-//        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
+        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
 //        url="http://www.jyeoo.com/chemistry/ques/search"; //初中化学
 //        url="http://www.jyeoo.com/geography/ques/search"; //初中地理
 //        url="http://www.jyeoo.com/english/ques/search"; //初中英语  结构不一样
 //        url = "http://www.jyeoo.com/chinese/ques/search"; //初中语文  结构不一样
 //        url="http://www.jyeoo.com/history/ques/search"; //初中历史
-//        url="http://www2.jyeoo.com/science/ques/search"; //初中科学  需要加入校园号
 //        url="http://www.jyeoo.com/math2/ques/search"; //高中数学
 //        url="http://www.jyeoo.com/physics2/ques/search"; //高中物理
 //        url="http://www.jyeoo.com/chemistry2/ques/search"; //高中化学
 //        url="http://www.jyeoo.com/geography2/ques/search"; //高中地理   没有年级
 //        url="http://www.jyeoo.com/english2/ques/search"; //高中英语 结构不一样
-        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文 结构不一样
+//        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文 结构不一样
 //        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
 //        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
 //        url="http://www.jyeoo.com/math3/ques/search"; //小学数学
-//        url="http://www.jyeoo.com/math0/ques/search"; //小学奥数  机构不一样
+
+//        url="http://www2.jyeoo.com/science/ques/search"; //初中科学  需要加入校园号
+//        url="http://www.jyeoo.com/math0/ques/search"; //小学奥数  需要权限
 //        url="http://www.jyeoo.com/";
 //        url="http://www.jyeoo.com/math0/ques/search";
 
@@ -481,7 +511,6 @@ public class Process2 implements PageProcessor {
         Spider
                 .create(new Process2())
                 .addUrl(url)
-
                 .run();
 //                .test(url);
     }
