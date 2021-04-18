@@ -42,7 +42,6 @@ public class Process2 implements PageProcessor {
     private static QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
 
 
-
     public void process(Page page) {
 
         String url = page.getUrl().get();
@@ -65,19 +64,19 @@ public class Process2 implements PageProcessor {
                 for (Selectable a : as) {
                     String code = a.regex("set.*?\\(this,(\\d+)\\)", 1).get();
                     String name = a.xpath("/a/text()").get();
-                    if("0".equals(code)){
+                    if ("0".equals(code)) {
                         continue;
                     }
 
-                    String id = myDic.get(name.replaceAll(" ",""));
+                    String id = myDic.get(name.replaceAll(" ", ""));
                     QuestLabelWord questLabelWord = new QuestLabelWord();
                     questLabelWord.setId(id);
                     questLabelWord.setValue(code);
-                    if(id!=null && code!=null){
-                        System.out.println("--更新----"+id+"---"+name+"------"+type+"-------"+code+"----"+url);
+                    if (id != null && code != null) {
+                        System.out.println("--更新----" + id + "---" + name + "------" + type + "-------" + code + "----" + url);
 //                        questLabelWordDao.updateWord(questLabelWord);
-                    }else{
-                        System.out.println("--没有更新----"+name+"------"+type+"-------"+code+"---"+url);
+                    } else {
+                        System.out.println("--没有更新----" + name + "------" + type + "-------" + code + "---" + url);
                     }
 //                    System.out.println("*----*"+id+"\t"+type+"\t"+name+"\t"+code);
 
@@ -190,7 +189,6 @@ public class Process2 implements PageProcessor {
 
                     String catUrl = uri + "partialcategory?a=" + uuid;
                     System.out.println(name + "------" + bMap.get(bCode) + "------------" + uuid + "----------" + catUrl);
-                    page.addTargetRequest(catUrl);
 
                     //id拼接
                     String grandId = myDic.get(gcInfo.split(" ")[0]);
@@ -220,8 +218,8 @@ public class Process2 implements PageProcessor {
                         relateBook.setTermId(termId);
                         relateBook.setBookId(bookId);
                         relateBookDao.add(relateBook);
-
                         relateMap.put(catUrl, id);
+                        page.addTargetRequest(catUrl);
                     }
                     System.out.println(siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
                 }
@@ -254,7 +252,7 @@ public class Process2 implements PageProcessor {
                     chapter.setLevel(level);
                     chapter.setPk(pk1);
                     chapter.setKnowledgeTag(knowledgeTag);
-                    System.out.println("*****"+chapter.toString());
+                    System.out.println("*****" + chapter.toString());
                     chapterDao.add(chapter);
 
                     int j = 1;
@@ -280,16 +278,16 @@ public class Process2 implements PageProcessor {
                         chapterDao.add(chapter);
 
                         Elements lis3 = li2.select("li>a[onclick^=nodeClick]+ul>li");
-                        int k=1;
+                        int k = 1;
                         for (Element li3 : lis3) {
                             String name3 = li3.select("li>a").first().text();
                             String pk3 = li3.select("li>a").attr("pk");
                             System.out.println(name3 + "---三级----" + pk3);
 
-                            id = String.format("G%02d", i) + String.format(".%02d", j)+ String.format(".%02d", k);
+                            id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k);
                             k++;
                             level = 3;
-                            knowledgeTag =1;
+                            knowledgeTag = 1;
 
                             chapter = new Chapter();
                             chapter.setId(id);
@@ -483,7 +481,7 @@ public class Process2 implements PageProcessor {
 
     public static void main(String[] args) {
         String url = "http://www.jyeoo.com/math/ques/search"; //科目
-        url="http://www.jyeoo.com/";
+        url = "http://www.jyeoo.com/";
 //        url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
 //        url = "http://www.jyeoo.com/math/ques/search"; //初中数学
 //        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
@@ -514,7 +512,7 @@ public class Process2 implements PageProcessor {
         Spider
                 .create(new Process2())
                 .addUrl(url)
-                .thread(3)
+                .thread(5)
                 .run();
 //                .test(url);
     }
