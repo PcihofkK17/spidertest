@@ -2,11 +2,11 @@ package com.jk.data;
 
 import com.jk.data.bean.TObject;
 import com.jk.data.bean.TikuKonwBean;
+import com.jk.data.com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.AppUtils;
 import com.jk.data.mybatis.bean.TiKuTermCourse;
 import com.jk.data.mybatis.bean.TikuKnowNum;
 import com.jk.data.mybatis.bean.TikuStructBean;
-import com.jk.data.com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.dao.TikuKnowNumDao;
 import com.jk.data.mybatis.dao.TikuStructBeanDao;
 import com.jk.data.mybatis.dao.TikuTermCourseDao;
@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by 76204 on 2017/7/5.
@@ -33,16 +34,12 @@ public class TikuProcess implements PageProcessor {
     private TikuStructBeanDao tikuStructBeanDao = AppUtils.daoFactory(TikuStructBeanDao.class);
     private TikuTermCourseDao tikuTermCourseDao = AppUtils.daoFactory(TikuTermCourseDao.class);
 
-    int count=1;
+     private AtomicInteger count=new AtomicInteger(1);
     public void process(Page page) {
-
-
-
-
         String url = page.getUrl().get();
         if(url.matches("http://www.tiku.com/testPaper.html\\?sct\\=1|http://www.tiku.com/testPaper.html\\?sct=\\d+\\&cid=\\d+")){
             //存储学科 年级关系
-            if(count==1){
+            if(count.get()==1){
                 List<Selectable> divs = page.getHtml().xpath("//div[@class='item-mn']").nodes();
                 for (Selectable div : divs) {
                     String term = div.xpath("/div/a/text()").get();
@@ -58,11 +55,13 @@ public class TikuProcess implements PageProcessor {
                         tikuTermCourseDao.add(tiKuTermCourse);
 
                         String termUrl = termTmp.replace("AA", dataId);
+
                         page.addTargetRequest(termUrl);
                         System.out.println(term+"---"+course+"----"+dataId+"-----"+termUrl);
+
                     }
                 }
-                count++;
+                count.incrementAndGet();
             }
 
             List<Selectable> lis = page.getHtml().xpath("//ul[@class='m-tree']/li[@class='tree-node tree-node-0 z-open']").nodes();
@@ -121,6 +120,7 @@ public class TikuProcess implements PageProcessor {
                         e.printStackTrace();
                     }
                     page.addTargetRequest(request);
+
                 }
             }
         }else if(url.matches("http://www.tiku.com/service/knowledge/findKnowledgeByCourseAndParentId.*")){
@@ -151,22 +151,24 @@ public class TikuProcess implements PageProcessor {
 
 
                 String sdid = page.getUrl().regex("#(\\d+)").get();
-                String tUrl = knowTmp.replace("AA", sdid).replace("BB", String.valueOf(parentId)).replace("CC", String.valueOf(id));
+                String tUrl = knowTmp.replace("AA", sdid).replace("BB", String.valueOf(parentId)).replace("CC", String.valueOf(id)).replace("DD",String.valueOf(courseId));
                 System.out.println("tUrl:::::"+tUrl);
                 page.addTargetRequest(tUrl);
+
             }
-        }else  if(url.matches("http://www.tiku.com/testPaper.html\\?sct=\\d+\\&sdid=\\d+\\&tdid=\\d+\\&ftid=\\d+")){
+        }else  if(url.matches("http://www.tiku.com/testPaper.html\\?sct=\\d+\\&sdid=\\d+\\&tdid=\\d+\\&ftid=\\d+\\&cid=\\d+")){
             String numStr = page.getHtml().xpath("//li[@class='filter']/span/strong/text()").get();
             String tdid = page.getUrl().regex("tdid=(\\d+)").get();
 
             TikuKnowNum tikuKnowNum = new TikuKnowNum();
             tikuKnowNum.setId(tdid);
             tikuKnowNum.setNum(Integer.parseInt(numStr));
+            tikuKnowNum.setUrl(url);
             tikuKnowNumDao.add(tikuKnowNum);
             System.out.println(tdid+"----"+numStr);
         }
     }
-    private  static final String knowTmp ="http://www.tiku.com/testPaper.html?sct=1&sdid=BB&tdid=CC&ftid=AA"; //三级知识点
+    private  static final String knowTmp ="http://www.tiku.com/testPaper.html?sct=1&sdid=BB&tdid=CC&ftid=AA&cid=DD"; //三级知识点
     private  static final String termTmp ="http://www.tiku.com/testPaper.html?sct=1&cid=AA"; //学科
 
     public Site getSite() {
@@ -183,8 +185,10 @@ public class TikuProcess implements PageProcessor {
         String  url="http://www.tiku.com/testPaper.html?sct=1";
 //        url="http://www.tiku.com/testPaper.html?sct=1&sdid=700123&tdid=700132&ftid=700122";
 
-          url="http://www.tiku.com/testPaper.html?sct=1&cid=500018";
+//          url="http://www.tiku.com/testPaper.html?sct=1&cid=500018";
+//          url="http://www.tiku.com/testPaper.html?sct=1&sdid=707611&tdid=707678&ftid=707518&cid=500018";
           Spider.create(new TikuProcess())
+                  .thread(10)
                  .addUrl(url)
                   .run();
         }

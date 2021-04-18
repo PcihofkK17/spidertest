@@ -6,6 +6,7 @@ package com.jk.data.mybatis.bean;
 public class TikuKnowNum {
     private String  id;
     private Integer  num;
+    private String  url;
 
     public String getId() {
         return id;
@@ -21,5 +22,14 @@ public class TikuKnowNum {
 
     public void setNum(Integer num) {
         this.num = num;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
