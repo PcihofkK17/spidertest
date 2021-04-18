@@ -218,6 +218,7 @@ public class Process2 implements PageProcessor {
                         relateBook.setTermId(termId);
                         relateBook.setBookId(bookId);
                         relateBookDao.add(relateBook);
+
                         relateMap.put(catUrl, id);
                         page.addTargetRequest(catUrl);
                     }
