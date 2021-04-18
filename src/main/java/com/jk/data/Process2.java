@@ -486,23 +486,26 @@ public class Process2 implements PageProcessor {
         url="http://www.jyeoo.com/";
 //        url = "http://www.jyeoo.com/physics/ques/partialcategory?a=79fb5dfa-9ea4-4476-a8e9-e56db096a949"; //版本年级
 //        url = "http://www.jyeoo.com/math/ques/search"; //初中数学
-        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
+//        url="http://www.jyeoo.com/physics/ques/search"; //初中物理
 //        url="http://www.jyeoo.com/chemistry/ques/search"; //初中化学
+//        ur="http://www.jyeoo.com/bio/ques/searc"; //初中生物
 //        url="http://www.jyeoo.com/geography/ques/search"; //初中地理
 //        url="http://www.jyeoo.com/english/ques/search"; //初中英语  结构不一样
 //        url = "http://www.jyeoo.com/chinese/ques/search"; //初中语文  结构不一样
+//        url="http://www.jyeoo.com/politics/ques/search"; //初中政治
 //        url="http://www.jyeoo.com/history/ques/search"; //初中历史
 //        url="http://www.jyeoo.com/math2/ques/search"; //高中数学
 //        url="http://www.jyeoo.com/physics2/ques/search"; //高中物理
 //        url="http://www.jyeoo.com/chemistry2/ques/search"; //高中化学
+//        url="http://www.jyeoo.com/bio2/ques/search";  //高中生物
 //        url="http://www.jyeoo.com/geography2/ques/search"; //高中地理   没有年级
 //        url="http://www.jyeoo.com/english2/ques/search"; //高中英语 结构不一样
 //        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文 结构不一样
-//        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
 //        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
+//        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
 //        url="http://www.jyeoo.com/math3/ques/search"; //小学数学
 
-//        url="http://www2.jyeoo.com/science/ques/search"; //初中科学  需要加入校园号
+//        url="http://www.jyeoo.com/science/ques/search"; //初中科学  需要加入校园号
 //        url="http://www.jyeoo.com/math0/ques/search"; //小学奥数  需要权限
 //        url="http://www.jyeoo.com/";
 //        url="http://www.jyeoo.com/math0/ques/search";
@@ -511,6 +514,7 @@ public class Process2 implements PageProcessor {
         Spider
                 .create(new Process2())
                 .addUrl(url)
+                .thread(3)
                 .run();
 //                .test(url);
     }

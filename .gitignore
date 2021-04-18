@@ -77,3 +77,4 @@
 /logs/newsSpider.log
 /logs/newsSpider.log.2017-07-03
 /logs
+/out/artifacts/spiderTest_jar/logs/*.log
