@@ -67,4 +67,17 @@ public class RelateBook {
     public void setBookId(String bookId) {
         this.bookId = bookId;
     }
+
+    @Override
+    public String toString() {
+        return "RelateBook{" +
+                "id='" + id + '\'' +
+                ", siteId='" + siteId + '\'' +
+                ", gradeId='" + gradeId + '\'' +
+                ", courseId='" + courseId + '\'' +
+                ", branchId='" + branchId + '\'' +
+                ", termId='" + termId + '\'' +
+                ", bookId='" + bookId + '\'' +
+                '}';
+    }
 }
