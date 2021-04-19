@@ -4,9 +4,11 @@ import com.jk.data.com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.AppUtils;
 import com.jk.data.mybatis.bean.Chapter;
 import com.jk.data.mybatis.bean.QuestLabelWord;
+import com.jk.data.mybatis.bean.RbookQuest;
 import com.jk.data.mybatis.bean.RelateBook;
 import com.jk.data.mybatis.dao.ChapterDao;
 import com.jk.data.mybatis.dao.QuestLabelWordDao;
+import com.jk.data.mybatis.dao.RbookQuestDao;
 import com.jk.data.mybatis.dao.RelateBookDao;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -40,6 +42,7 @@ public class Process2 implements PageProcessor {
     private static RelateBookDao relateBookDao = AppUtils.daoFactory(RelateBookDao.class);
     private static ChapterDao chapterDao = AppUtils.daoFactory(ChapterDao.class);
     private static QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
+    private static RbookQuestDao rbookQuestDao = AppUtils.daoFactory(RbookQuestDao.class);
 
 
     public void process(Page page) {
@@ -56,6 +59,8 @@ public class Process2 implements PageProcessor {
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/search.*")) {
             //科目
 
+            Set<String > qwIdSet=new HashSet<String>(); //存储 QuestLabelWord的id
+            Set<String > rbIdSet=new HashSet<String>(); //存储 relateBook的id
             //题型 难度 来源
             List<Selectable> trs = page.getHtml().xpath("//table[@class='degree']/tbody/tr").nodes();
             for (Selectable tr : trs) {
@@ -68,17 +73,18 @@ public class Process2 implements PageProcessor {
                         continue;
                     }
 
-                    String id = myDic.get(name.replaceAll(" ", ""));
+                    String qwid = myDic.get(name.replaceAll(" ", ""));
                     QuestLabelWord questLabelWord = new QuestLabelWord();
-                    questLabelWord.setId(id);
+                    questLabelWord.setId(qwid);
                     questLabelWord.setValue(code);
-                    if (id != null && code != null) {
-                        System.out.println("--更新----" + id + "---" + name + "------" + type + "-------" + code + "----" + url);
+                    if (qwid != null && code != null) {
+                        System.out.println("--更新----" + qwid + "---" + name + "------" + type + "-------" + code + "----" + url);
+                        qwIdSet.add(qwid);
 //                        questLabelWordDao.updateWord(questLabelWord);
                     } else {
                         System.out.println("--没有更新----" + name + "------" + type + "-------" + code + "---" + url);
                     }
-//                    System.out.println("*----*"+id+"\t"+type+"\t"+name+"\t"+code);
+//                    System.out.println("*----*"+qwid+"\t"+type+"\t"+name+"\t"+code);
 
                 }
 
@@ -97,7 +103,7 @@ public class Process2 implements PageProcessor {
                 String bookId = "F00";
 
                 String id = siteId + grandId + courseId + branchId + termId + bookId;
-
+                rbIdSet.add(id);
                 RelateBook relateBook = new RelateBook();
                 relateBook.setId(id);
                 relateBook.setGradeId(grandId);
@@ -107,12 +113,12 @@ public class Process2 implements PageProcessor {
                 relateBook.setTermId(termId);
                 relateBook.setBookId(bookId);
                 String catUrl = uri + "partialcategory?a=undefined&q=1&f=1";
-                System.out.println(siteId + "---" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId + "----" + catUrl);
+                System.out.println(id+"-----"+siteId + "---" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId + "----" + catUrl);
                 if (grandId != null && siteId != null && courseId != null && branchId != null && termId != null && bookId != null) {
                     relateBookDao.add(relateBook);
                 }
                 relateMap.put(catUrl, id);
-                page.addTargetRequest(catUrl);
+//                page.addTargetRequest(catUrl);
 
             } else if ("http://www.jyeoo.com/geography2/ques/search".equals(url)) {
                 //高中地理
@@ -143,7 +149,8 @@ public class Process2 implements PageProcessor {
 
 
                         String id = siteId + grandId + courseId + brandId + termId + bookId;
-                        System.out.println(pk + "------" + bName + "----" + bookId + "----" + brandId + "----" + catUrl + "----" + id);
+                        rbIdSet.add(id);
+                        System.out.println(id+"-----"+pk + "------" + bName + "----" + bookId + "----" + brandId + "----" + catUrl + "----" + id);
                         RelateBook relateBook = new RelateBook();
                         relateBook.setId(id);
                         relateBook.setGradeId(grandId);
@@ -157,7 +164,7 @@ public class Process2 implements PageProcessor {
                         }
 
                         relateMap.put(catUrl, id);
-                        page.addTargetRequest(catUrl);
+//                        page.addTargetRequest(catUrl);
                     }
                 }
 
@@ -204,6 +211,7 @@ public class Process2 implements PageProcessor {
                     }
 
                     String id = siteId + grandId + courseId + branchId + termId + bookId;
+                    rbIdSet.add(id);
                     if (branchId == null || termId == null) {
                         System.out.println(bMap.get(bCode) + "---漏掉----" + termId);
                     }
@@ -220,11 +228,22 @@ public class Process2 implements PageProcessor {
                         relateBookDao.add(relateBook);
 
                         relateMap.put(catUrl, id);
-                        page.addTargetRequest(catUrl);
+//                        page.addTargetRequest(catUrl);
                     }
-                    System.out.println(siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
+                    System.out.println(id+"-----"+siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
                 }
             }
+
+            //存储该页大选项和小选项之间的关系
+            for (String rbid : rbIdSet) {
+                for (String qwid : qwIdSet) {
+                    RbookQuest rbookQuest = new RbookQuest();
+                    rbookQuest.setRelateBookId(rbid.split("D")[0]);
+                    rbookQuest.setQid(qwid);
+                    rbookQuestDao.add(rbookQuest);
+                }
+            }
+
 
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/partialcategory.*")) {
             //各个版本
