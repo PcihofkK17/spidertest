@@ -2,14 +2,8 @@ package com.jk.data;
 
 import com.jk.data.com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.AppUtils;
-import com.jk.data.mybatis.bean.Chapter;
-import com.jk.data.mybatis.bean.QuestLabelWord;
-import com.jk.data.mybatis.bean.RbookQuest;
-import com.jk.data.mybatis.bean.RelateBook;
-import com.jk.data.mybatis.dao.ChapterDao;
-import com.jk.data.mybatis.dao.QuestLabelWordDao;
-import com.jk.data.mybatis.dao.RbookQuestDao;
-import com.jk.data.mybatis.dao.RelateBookDao;
+import com.jk.data.mybatis.bean.*;
+import com.jk.data.mybatis.dao.*;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,6 +37,7 @@ public class Process2 implements PageProcessor {
     private static ChapterDao chapterDao = AppUtils.daoFactory(ChapterDao.class);
     private static QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
     private static RbookQuestDao rbookQuestDao = AppUtils.daoFactory(RbookQuestDao.class);
+    private static CourceRelateUrlValueDao courceRelateUrlValueDao = AppUtils.daoFactory(CourceRelateUrlValueDao.class);
 
 
     public void process(Page page) {
@@ -53,7 +48,20 @@ public class Process2 implements PageProcessor {
             for (Selectable node : nodes) {
                 String name = node.xpath("/a/@title").get();
                 String href = node.xpath("/a/@href").get();
-                System.out.println(name + "------" + href);
+                String value = node.xpath("/a/@href").regex("/([a-z0-9]+)/ques/").get();
+
+                String term = name.substring(0, 2);
+                String course = name.substring(2, 4);
+
+                System.out.println(name + "------" + href+"----"+value+"---"+term+"---"+value);
+
+                String  courseId="A01"+myDic.get(term)+myDic.get(course);
+                CourseRelateUrlValue courseRelateUrlValue = new CourseRelateUrlValue();
+                courseRelateUrlValue.setCourseId(courseId);
+                courseRelateUrlValue.setUrlValue(value);
+               courceRelateUrlValueDao.add(courseRelateUrlValue);
+
+
                 page.addTargetRequest(href);
             }
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/search.*")) {
@@ -533,8 +541,8 @@ public class Process2 implements PageProcessor {
                 .create(new Process2())
                 .addUrl(url)
                 .thread(5)
-                .run();
-//                .test(url);
+//                .run();
+                .test(url);
     }
 
 
