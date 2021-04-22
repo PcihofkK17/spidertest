@@ -29,14 +29,6 @@ public class JyLoginer {
         WebDriver driver = new FirefoxDriver(profile);
 
         driver.get("http://www.jyeoo.com/account/login");
-//        WebElement loginBtn = driver.findElement(By.className("user"));
-//        loginBtn.click();
-
-//        try {
-//            Thread.sleep(20000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         Scanner scanner=new Scanner(System.in);
         System.out.println("begin::::按 enter 开始");
         String next = scanner.nextLine();
@@ -56,7 +48,7 @@ public class JyLoginer {
                 String cookieStr = cookies.toString();
                 System.out.println("刷新....."+cookieStr);
 
-                RedisUtils.lpush("qq_cookies", cookieStr.substring(1, cookieStr.length() - 1).replace(",", ";"));
+                RedisUtils.lpush("jyw_cookies", cookieStr.substring(1, cookieStr.length() - 1).replace(",", ";"));
                 ThreadUtil.sleep(1000);
 
             }
