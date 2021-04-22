@@ -23,11 +23,13 @@ public class IOTest {
                 String name = each.split("\t")[1];
                 dicMap.put(name,code);
             }
-//            System.out.println(list);
+            System.out.println(list);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(dicMap);
+
         return dicMap;
     }
 }
