@@ -263,9 +263,9 @@ public class Process2 implements PageProcessor {
                 int i = 1;
                 for (Element li : lis) {
                     //一级
-                    String name1 = li.select("li>a").first().text();
+                    String name1 = li.select("li>a").text();
                     String pk1 = "_";
-                    Elements lis2 = li.select("li>a[onclick^=openThisTreeNode]+ul>li");
+                    Elements  lis2= li.select("li>a[onclick^=openThisTreeNode]+ul>li");
                     System.out.println(name1 + "--一级----" + pk1);
 
                     String id = String.format("G%02d", i);
@@ -344,7 +344,7 @@ public class Process2 implements PageProcessor {
                     zBean.setPk(zpk);
 
                     String id = String.format("G%02d", i);
-                    i++;
+
                     int level = 1;
                     int knowledgeTag = 0;
 
@@ -368,7 +368,7 @@ public class Process2 implements PageProcessor {
                         jBean.setName(name);
 
                         id = String.format("G%02d", i) + String.format(".%02d", j);
-                        j++;
+
                         level = 2;
                         knowledgeTag = 0;
 
@@ -389,7 +389,6 @@ public class Process2 implements PageProcessor {
                             String zname = element1.select("li>a").first().text();
                             if (pk1.endsWith("~")) {
 
-
                                 Elements as3 = element1.select("li>ul>li>a");
                                 System.out.println(pk1 + "------二级节点------" + zname);
 
@@ -398,7 +397,7 @@ public class Process2 implements PageProcessor {
                                 jBean2.setName(zname);
 
                                 id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k);
-                                k++;
+
                                 level = 3;
                                 knowledgeTag = 0;
 
@@ -415,6 +414,11 @@ public class Process2 implements PageProcessor {
                                 for (Element element2 : as3) {
                                     String pk2 = element2.attr("pk");
                                     String name2 = element2.text();
+
+                                    if("1Z：合数分解质因数".equals(name2)){
+                                        System.out.println("bbbbbbbbbbbbbb"+name2);
+                                    }
+
                                     System.out.println(pk2 + "------知识点-------" + name2);
 
                                     ZSBean zsBean = new ZSBean();
@@ -423,7 +427,7 @@ public class Process2 implements PageProcessor {
                                     jBean2.addZsBean(zsBean);
 
                                     id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k) + String.format(".%02d", n);
-                                    n++;
+
                                     level = 4;
                                     knowledgeTag = 1;
 
@@ -438,10 +442,16 @@ public class Process2 implements PageProcessor {
 
                                     String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
                                     String nUrl = uri + "partialques?q=" + pk2;
+                                    n++;
 //                               page.addTargetRequest(nUrl);
                                 }
                                 jBean.addJBeans2(jBean2);
                             } else {
+
+                                if("1Z：合数分解质因数".equals(zname)){
+                                    System.out.println("aaaaaaaaaaaaaaa"+zname);
+                                }
+
                                 System.out.println(pk1 + "------知识点------" + zname);
                                 ZSBean zsBean = new ZSBean();
                                 zsBean.setPk(pk1);
@@ -450,7 +460,6 @@ public class Process2 implements PageProcessor {
                                 jBean.addZsBean(zsBean);
 
                                 id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k);
-                                k++;
                                 level = 3;
                                 knowledgeTag = 1;
 
@@ -468,11 +477,14 @@ public class Process2 implements PageProcessor {
 //                            page.addTargetRequest(nUrl);
                             }
 
+                            k++;
                         }
                         zBean.addJbean(jBean);
+                        j++;
                     }
                     zBeans.add(zBean);
 
+                    i++;
                 }
                 System.out.println(zBeans);
 
@@ -537,6 +549,9 @@ public class Process2 implements PageProcessor {
 //        url="http://www.jyeoo.com/math0/ques/search";
 
 //        url = "http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
+
+        url="http://www.jyeoo.com/math3/ques/partialcategory?a=b9f9287f-8348-4b95-8c06-8bdcfc559928&q=b9f9287f-8348-4b95-8c06-8bdcfc559928~f1483a4d-66cd-4fb9-8ca4-68a0d7ddc7d7~&f=0&r=0.2692786993780121";
+
         Spider
                 .create(new Process2())
                 .addUrl(url)
