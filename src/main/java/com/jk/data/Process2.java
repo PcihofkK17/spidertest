@@ -53,13 +53,13 @@ public class Process2 implements PageProcessor {
                 String term = name.substring(0, 2);
                 String course = name.substring(2, 4);
 
-                System.out.println(name + "------" + href+"----"+value+"---"+term+"---"+value);
+                System.out.println(name + "------" + href + "----" + value + "---" + term + "---" + value);
 
-                String  courseId="A01"+myDic.get(term)+myDic.get(course);
+                String courseId = "A01" + myDic.get(term) + myDic.get(course);
                 CourseRelateUrlValue courseRelateUrlValue = new CourseRelateUrlValue();
-                courseRelateUrlValue.setCourseId(courseId);
+                courseRelateUrlValue.setCourseRelateId(courseId);
                 courseRelateUrlValue.setUrlValue(value);
-               courceRelateUrlValueDao.add(courseRelateUrlValue);
+                courceRelateUrlValueDao.add(courseRelateUrlValue);
 
 
                 page.addTargetRequest(href);
@@ -67,8 +67,8 @@ public class Process2 implements PageProcessor {
         } else if (url.matches("http://www.jyeoo.com/.*?/ques/search.*")) {
             //科目
 
-            Set<String > qwIdSet=new HashSet<String>(); //存储 QuestLabelWord的id
-            Set<String > rbIdSet=new HashSet<String>(); //存储 relateBook的id
+            Set<String> qwIdSet = new HashSet<String>(); //存储 QuestLabelWord的id
+            Set<String> rbIdSet = new HashSet<String>(); //存储 relateBook的id
             //题型 难度 来源
             List<Selectable> trs = page.getHtml().xpath("//table[@class='degree']/tbody/tr").nodes();
             for (Selectable tr : trs) {
@@ -121,12 +121,12 @@ public class Process2 implements PageProcessor {
                 relateBook.setTermId(termId);
                 relateBook.setBookId(bookId);
                 String catUrl = uri + "partialcategory?a=undefined&q=1&f=1";
-                System.out.println(id+"-----"+siteId + "---" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId + "----" + catUrl);
+                System.out.println(id + "-----" + siteId + "---" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId + "----" + catUrl);
                 if (grandId != null && siteId != null && courseId != null && branchId != null && termId != null && bookId != null) {
                     relateBookDao.add(relateBook);
                 }
                 relateMap.put(catUrl, id);
-//                page.addTargetRequest(catUrl);
+                page.addTargetRequest(catUrl);
 
             } else if ("http://www.jyeoo.com/geography2/ques/search".equals(url)) {
                 //高中地理
@@ -158,7 +158,7 @@ public class Process2 implements PageProcessor {
 
                         String id = siteId + grandId + courseId + brandId + termId + bookId;
                         rbIdSet.add(id);
-                        System.out.println(id+"-----"+pk + "------" + bName + "----" + bookId + "----" + brandId + "----" + catUrl + "----" + id);
+                        System.out.println(id + "-----" + pk + "------" + bName + "----" + bookId + "----" + brandId + "----" + catUrl + "----" + id);
                         RelateBook relateBook = new RelateBook();
                         relateBook.setId(id);
                         relateBook.setGradeId(grandId);
@@ -172,7 +172,7 @@ public class Process2 implements PageProcessor {
                         }
 
                         relateMap.put(catUrl, id);
-//                        page.addTargetRequest(catUrl);
+                        page.addTargetRequest(catUrl);
                     }
                 }
 
@@ -236,9 +236,9 @@ public class Process2 implements PageProcessor {
                         relateBookDao.add(relateBook);
 
                         relateMap.put(catUrl, id);
-//                        page.addTargetRequest(catUrl);
+                        page.addTargetRequest(catUrl);
                     }
-                    System.out.println(id+"-----"+siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
+                    System.out.println(id + "-----" + siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
                 }
             }
 
@@ -263,9 +263,9 @@ public class Process2 implements PageProcessor {
                 int i = 1;
                 for (Element li : lis) {
                     //一级
-                    String name1 = li.select("li>a").text();
+                    String name1 = li.select("li>a").first().text();
                     String pk1 = "_";
-                    Elements  lis2= li.select("li>a[onclick^=openThisTreeNode]+ul>li");
+                    Elements lis2 = li.select("li>a[onclick^=openThisTreeNode]+ul>li");
                     System.out.println(name1 + "--一级----" + pk1);
 
                     String id = String.format("G%02d", i);
@@ -335,7 +335,7 @@ public class Process2 implements PageProcessor {
                 int i = 1;
                 for (Element li : lis) {
                     String zhText = li.select("li>a").first().text();
-                    String zpk = li.select("li>a[pk$=~]").first().attr("pk").split("~")[0];
+                    String zpk = li.select("li>a[pk$=~]").first().attr("pk");
                     Elements lis2 = li.select("li>a[pk$=~]:contains(章)+ul>li");
                     System.out.println(zpk + "-------章节---------" + zhText);
 
@@ -382,7 +382,7 @@ public class Process2 implements PageProcessor {
                         chapterDao.add(chapter);
 
                         System.out.println(pk + "------节点------" + name);
-                        Elements lis3 = element.select("li>ul>li");
+                        Elements lis3 = element.select("li>a:contains(节)+ul>li");
                         int k = 1;
                         for (Element element1 : lis3) {
                             String pk1 = element1.select("li>a").attr("pk");
@@ -415,8 +415,8 @@ public class Process2 implements PageProcessor {
                                     String pk2 = element2.attr("pk");
                                     String name2 = element2.text();
 
-                                    if("1Z：合数分解质因数".equals(name2)){
-                                        System.out.println("bbbbbbbbbbbbbb"+name2);
+                                    if ("1Z：合数分解质因数".equals(name2)) {
+                                        System.out.println("bbbbbbbbbbbbbb" + name2);
                                     }
 
                                     System.out.println(pk2 + "------知识点-------" + name2);
@@ -448,8 +448,8 @@ public class Process2 implements PageProcessor {
                                 jBean.addJBeans2(jBean2);
                             } else {
 
-                                if("1Z：合数分解质因数".equals(zname)){
-                                    System.out.println("aaaaaaaaaaaaaaa"+zname);
+                                if ("1Z：合数分解质因数".equals(zname)) {
+                                    System.out.println("aaaaaaaaaaaaaaa" + zname);
                                 }
 
                                 System.out.println(pk1 + "------知识点------" + zname);
@@ -550,14 +550,15 @@ public class Process2 implements PageProcessor {
 
 //        url = "http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
 
-        url="http://www.jyeoo.com/math3/ques/partialcategory?a=b9f9287f-8348-4b95-8c06-8bdcfc559928&q=b9f9287f-8348-4b95-8c06-8bdcfc559928~f1483a4d-66cd-4fb9-8ca4-68a0d7ddc7d7~&f=0&r=0.2692786993780121";
+//        url="http://www.jyeoo.com/math3/ques/partialcategory?a=b9f9287f-8348-4b95-8c06-8bdcfc559928&q=b9f9287f-8348-4b95-8c06-8bdcfc559928~f1483a4d-66cd-4fb9-8ca4-68a0d7ddc7d7~&f=0&r=0.2692786993780121";
+//         url="http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
 
         Spider
                 .create(new Process2())
                 .addUrl(url)
                 .thread(5)
-//                .run();
-                .test(url);
+                .run();
+//                .test(url);
     }
 
 
