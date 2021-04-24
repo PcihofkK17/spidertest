@@ -29,11 +29,27 @@ public class JyLoginer {
         WebDriver driver = new FirefoxDriver(profile);
 
         driver.get("http://www.jyeoo.com/account/login");
-        Scanner scanner=new Scanner(System.in);
-        System.out.println("begin::::按 enter 开始");
-        String next = scanner.nextLine();
-        System.out.println("开始自动刷新。。。");
+        Scanner scanner = new Scanner(System.in);
 
+
+        driver.switchTo().frame(driver.findElement(By.id("mf")));
+
+        WebElement id = driver.findElement(By.id("Email"));
+        WebElement passwd = driver.findElement(By.id("Password"));
+        WebElement captcha = driver.findElement(By.id("Captcha"));
+
+        id.sendKeys("18611434755");
+        passwd.sendKeys("jycjh123");
+
+        System.out.println("请输入验证码：：");
+        String capValue = scanner.nextLine();
+
+        captcha.sendKeys(capValue);
+
+        driver.findElement(By.className("lbtn")).click();
+
+
+        System.out.println("开始自动刷新。。。");
 
         while (true){
             if(System.currentTimeMillis()%(1000*60*30)==0L){
@@ -53,18 +69,6 @@ public class JyLoginer {
 
             }
         }
-
-
-
-//        WebElement ele_user = driver.findElement(By.id("Email"));
-//        ele_user.sendKeys("18611434755");
-//        WebElement ele_pwd = driver.findElement(By.id("Password"));
-//        ele_pwd.sendKeys("jycjh123");
-
-
-//
-//        WebElement rem = driver.findElement(By.id("Remember"));
-//        rem.click();
 
     }
 }
