@@ -3,7 +3,7 @@ package com.jk.data.mybatis.bean;
 /**
  * Created by 76204 on 2017/7/4.
  */
-public class jinyou_struct {
+public class JinyouStruct {
 
 
 
@@ -13,6 +13,15 @@ public class jinyou_struct {
     private int level;
     private String  pk;
     private int   knowledgeTag;
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public String getCourse() {
+
+        return course;
+    }
 
     public String getId() {
         return id;
@@ -59,4 +68,15 @@ public class jinyou_struct {
         return knowledgeTag;
     }
 
+    @Override
+    public String toString() {
+        return "JinyouStruct{" +
+                "id='" + id + '\'' +
+                ", course='" + course + '\'' +
+                ", name='" + name + '\'' +
+                ", level=" + level +
+                ", pk='" + pk + '\'' +
+                ", knowledgeTag=" + knowledgeTag +
+                '}';
+    }
 }

@@ -134,8 +134,8 @@ public class Process2 implements PageProcessor {
                 relateMap.put(catUrl, id);
                 page.addTargetRequest(catUrl);
 
-            } else if ("http://www.jyeoo.com/geography2/ques/search".equals(url)) {
-                //高中地理
+            } else {
+
                 List<Selectable> nodes = page.getHtml().xpath("//tr[@class='JYE_EDITION']//a[@data-id]").nodes();
                 for (Selectable node : nodes) {
                     String banbenId = node.xpath("//a/@data-id").get();
@@ -144,27 +144,37 @@ public class Process2 implements PageProcessor {
                     System.out.println(name + "------" + banbenId);
                     bMap.put(banbenId, name);
                 }
-                List<Selectable> knodes = page.getHtml().xpath("//tr[@class='JYE_TYPE']").nodes();
-                for (Selectable knode : knodes) {
-                    String bCode = knode.xpath("/regex(tr_(\\d+),1)").get();
-                    String brandId = myDic.get(bMap.get(bCode));
-                    List<Selectable> bnodes = knode.xpath("/tr/td/ul/li/a").nodes();
-                    for (Selectable bnode : bnodes) {
-                        String pk = bnode.xpath("//a/regex('([a-zA-Z0-9]+\\-[a-zA-Z0-9]+\\-[a-zA-Z0-9]+\\-[a-zA-Z0-9]+\\-[a-zA-Z0-9]+)',1)").get();
-                        String bName = bnode.xpath("/a/text()").get();
+
+
+                List<Selectable> trs2 = page.getHtml().xpath("//table/tbody/tr[@id]").nodes();
+                for (Selectable tr : trs2) {
+                    String type = tr.xpath("/tr/th/text()").get();
+                    List<Selectable> as = tr.xpath("//li/a[@data-id]").nodes();
+                    String bcode = tr.xpath("/tr/@id").regex("tr_(\\d+)").get();
+                    for (Selectable a : as) {
+                        String name = a.xpath("/a/text()").get();
+                        String pk = a.xpath("/a/@onclick").regex("'(.*?)'", 1).get();
                         String catUrl = uri + "partialcategory?a=" + pk;
-
-                        //id拼接
-                        String grandId = myDic.get(gcInfo.split(" ")[0]);
-                        String siteId = myDic.get("菁优网");
-                        String courseId = myDic.get(gcInfo.split(" ")[1]);
-                        String termId = "E00";
-                        String bookId = myDic.get(bName);
-
-
+                        System.out.println(name + "*----------*" + pk);
+                        String siteId = null, grandId = null, courseId = null, brandId = null, termId = null, bookId = null;
+                        if ("年级及学期".equals(type)) {
+                            siteId = myDic.get("菁优网");
+                            grandId = myDic.get(gcInfo.split(" ")[0]);
+                            courseId = myDic.get(gcInfo.split(" ")[1]);
+                            brandId = myDic.get(bMap.get(bcode));
+                            termId = myDic.get(name);
+                            bookId = "F00";
+                        } else if ("课本".equals(type)) {
+                            siteId = myDic.get("菁优网");
+                            grandId = myDic.get(gcInfo.split(" ")[0]);
+                            courseId = myDic.get(gcInfo.split(" ")[1]);
+                            brandId = myDic.get(bMap.get(bcode));
+                            termId = "E00";
+                            bookId = myDic.get(name);
+                        }
                         String id = siteId + grandId + courseId + brandId + termId + bookId;
                         rbIdSet.add(id);
-                        System.out.println(id + "-----" + pk + "------" + bName + "----" + bookId + "----" + brandId + "----" + catUrl + "----" + id);
+                        System.out.println("*-----*" + id);
                         RelateBook relateBook = new RelateBook();
                         relateBook.setId(id);
                         relateBook.setGradeId(grandId);
@@ -182,85 +192,10 @@ public class Process2 implements PageProcessor {
                     }
                 }
 
-            } else {
-
-                List<Selectable> nodes = page.getHtml().xpath("//tr[@class='JYE_EDITION']//a[@data-id]").nodes();
-                for (Selectable node : nodes) {
-                    String banbenId = node.xpath("//a/@data-id").get();
-                    String name = node.xpath("//a/text()").get();
-
-                    System.out.println(name + "------" + banbenId);
-                    bMap.put(banbenId, name);
-                }
-                List<Selectable> bas = page.getHtml().xpath("//tr[@id='tr_1']//a").nodes();
-                for (Selectable ba : bas) {
-                    String bkCode = ba.xpath("/a/@data-id").get();
-                    String bName = ba.xpath("/a/text()").get();
-                    bookMap.put(bkCode, bName);
-                    System.out.println(bkCode + "************" + bName);
-                }
 
 
-                List<Selectable> trs2 = page.getHtml().xpath("//table[@class='jc-tb']/tbody/tr[@id]").nodes();
-                for (Selectable tr : trs2) {
-                    String bCode = tr.xpath("/tr/@id").replace("tr_", "").get();
-                    List<Selectable> as2 = tr.xpath("//li/a[@data-id]").nodes();
-                    for (Selectable a : as2) {
-                        String pk = a.xpath("/a/@onclick").regex("'([a-z0-9\\-]+)'", 1).get();
-                        String catUrl = uri + "partialcategory?a=" + pk;
 
 
-                    }
-
-                }
-
-
-            }
-            List<Selectable> nodes2 = page.getHtml().xpath("//tr[@class='JYE_TYPE']//a[@data-id]").nodes();
-            System.out.println("---node size--" + nodes2.size());
-            for (Selectable node : nodes2) {
-                String bCode = node.xpath("//a/@onclick").regex("this,(\\d+),").get();
-                System.out.println("bcode::::" + bCode);
-                String uuid = node.xpath("//a").regex("'([a-z0-9\\-]+)'", 1).get();
-                String name = node.xpath("//a/text()").get();
-
-                String catUrl = uri + "partialcategory?a=" + uuid;
-                System.out.println(name + "------" + bMap.get(bCode) + "------------" + uuid + "----------" + catUrl);
-
-                //id拼接
-                String grandId = myDic.get(gcInfo.split(" ")[0]);
-                String siteId = myDic.get("菁优网");
-                String courseId = myDic.get(gcInfo.split(" ")[1]);
-                String branchId = myDic.get(bMap.get(bCode));
-                String termId = myDic.get(name);
-                String bookId = null;
-                if (gcInfo.split(" ")[0].equals("高中")) {
-                    bookId = myDic.get(bookMap.get(bCode));
-                } else {
-                    bookId = "F00";
-                }
-
-                String id = siteId + grandId + courseId + branchId + termId + bookId;
-                rbIdSet.add(id);
-                if (branchId == null || termId == null) {
-                    System.out.println(bMap.get(bCode) + "---漏掉----" + termId);
-                }
-                if (grandId != null && siteId != null && courseId != null && branchId != null && termId != null && bookId != null) {
-
-                    RelateBook relateBook = new RelateBook();
-                    relateBook.setId(id);
-                    relateBook.setGradeId(grandId);
-                    relateBook.setSiteId(siteId);
-                    relateBook.setCourseId(courseId);
-                    relateBook.setBranchId(branchId);
-                    relateBook.setTermId(termId);
-                    relateBook.setBookId(bookId);
-                    relateBookDao.add(relateBook);
-
-                    relateMap.put(catUrl, id);
-                    page.addTargetRequest(catUrl);
-                }
-                System.out.println(id + "-----" + siteId + "--**-" + grandId + "----" + courseId + "----" + branchId + "----" + termId + "----" + bookId);
             }
 
             //存储该页大选项和小选项之间的关系
@@ -530,6 +465,8 @@ public class Process2 implements PageProcessor {
         grade_course_map = readGradecourse();
         return Site
                 .me()
+                .setTimeOut(7000)
+                .setRetryTimes(3)
                 .setUserAgent(userAgent)
                 ;
 
@@ -549,13 +486,13 @@ public class Process2 implements PageProcessor {
 //        url="http://www.jyeoo.com/politics/ques/search"; //初中政治
 //        url="http://www.jyeoo.com/history/ques/search"; //初中历史
 //        url="http://www.jyeoo.com/math2/ques/search"; //高中数学
-        url = "http://www.jyeoo.com/physics2/ques/search"; //高中物理
+//        url = "http://www.jyeoo.com/physics2/ques/search"; //高中物理
 //        url="http://www.jyeoo.com/chemistry2/ques/search"; //高中化学
 //        url="http://www.jyeoo.com/bio2/ques/search";  //高中生物
 //        url="http://www.jyeoo.com/geography2/ques/search"; //高中地理   没有年级
 //        url="http://www.jyeoo.com/english2/ques/search"; //高中英语 结构不一样
 //        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文 结构不一样
-//        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
+        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
 //        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
 //        url="http://www.jyeoo.com/math3/ques/search"; //小学数学
 
@@ -572,7 +509,8 @@ public class Process2 implements PageProcessor {
         Spider
                 .create(new Process2())
                 .addUrl(url)
-//                .thread(5)
+                .thread(5)
+
                 .run();
 //                .test(url);
     }

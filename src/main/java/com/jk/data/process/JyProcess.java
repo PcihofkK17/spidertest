@@ -43,6 +43,7 @@ public class JyProcess implements PageProcessor {
     private static QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
     private static RbookQuestDao rbookQuestDao = AppUtils.daoFactory(RbookQuestDao.class);
     private static CourceRelateUrlValueDao courceRelateUrlValueDao = AppUtils.daoFactory(CourceRelateUrlValueDao.class);
+    private static JinyouStructDao jinyouStructDao = AppUtils.daoFactory(JinyouStructDao.class);
 
 
     public void process(Page page) {
@@ -79,7 +80,7 @@ public class JyProcess implements PageProcessor {
             String rawText = page.getRawText();
             Document doc = Jsoup.parseBodyFragment(rawText);
             String urlValue = page.getUrl().regex("com/(.*?)/ques").get();
-            String relateBookId = courceRelateUrlValueDao.getByUrlValue(urlValue).getUrlValue();
+            String course = courceRelateUrlValueDao.getByUrlValue(urlValue).getCourseRelateId();
             if (url.matches("http://www.jyeoo.com/.*?/ques/partialcategory\\?a\\=undefined\\&q\\=1\\&f\\=1")) {
                 Elements lis = doc.select("ul.treeview>li");
                 int i = 1;
@@ -95,15 +96,15 @@ public class JyProcess implements PageProcessor {
                     int level = 1;
                     int knowledgeTag = 0;
 
-                    Chapter chapter = new Chapter();
-                    chapter.setId(id);
-                    chapter.setRelateBookId(relateBookId);
-                    chapter.setName(name1);
-                    chapter.setLevel(level);
-                    chapter.setPk(pk1);
-                    chapter.setKnowledgeTag(knowledgeTag);
-                    System.out.println("*****" + chapter.toString());
-                    chapterDao.add(chapter);
+                    JinyouStruct jinyouStruct = new JinyouStruct();
+                    jinyouStruct.setId(id);
+                    jinyouStruct.setCourse(course);
+                    jinyouStruct.setName(name1);
+                    jinyouStruct.setLevel(level);
+                    jinyouStruct.setPk(pk1);
+                    jinyouStruct.setKnowledgeTag(knowledgeTag);
+                    System.out.println("*****" + jinyouStruct.toString());
+                   jinyouStructDao.add(jinyouStruct);
 
                     int j = 1;
                     for (Element li2 : lis2) {
@@ -118,14 +119,14 @@ public class JyProcess implements PageProcessor {
                         level = 2;
                         knowledgeTag = 0;
 
-                        chapter = new Chapter();
-                        chapter.setId(id);
-                        chapter.setRelateBookId(relateBookId);
-                        chapter.setName(name2);
-                        chapter.setLevel(level);
-                        chapter.setPk(pk2);
-                        chapter.setKnowledgeTag(knowledgeTag);
-                        chapterDao.add(chapter);
+                        jinyouStruct = new JinyouStruct();
+                        jinyouStruct.setId(id);
+                        jinyouStruct.setCourse(course);
+                        jinyouStruct.setName(name2);
+                        jinyouStruct.setLevel(level);
+                        jinyouStruct.setPk(pk2);
+                        jinyouStruct.setKnowledgeTag(knowledgeTag);
+                        jinyouStructDao.add(jinyouStruct);
 
                         Elements lis3 = li2.select("li>a[onclick^=nodeClick]+ul>li");
                         int k = 1;
@@ -139,184 +140,21 @@ public class JyProcess implements PageProcessor {
                             level = 3;
                             knowledgeTag = 1;
 
-                            chapter = new Chapter();
-                            chapter.setId(id);
-                            chapter.setRelateBookId(relateBookId);
-                            chapter.setName(name3);
-                            chapter.setLevel(level);
-                            chapter.setPk(pk3);
-                            chapter.setKnowledgeTag(knowledgeTag);
-                            chapterDao.add(chapter);
+                            jinyouStruct = new JinyouStruct();
+                            jinyouStruct.setId(id);
+                            jinyouStruct.setCourse(course);
+                            jinyouStruct.setName(name3);
+                            jinyouStruct.setLevel(level);
+                            jinyouStruct.setPk(pk3);
+                            jinyouStruct.setKnowledgeTag(knowledgeTag);
+                            jinyouStructDao.add(jinyouStruct);
                             k++;
                         }
                         j++;
                     }
                     i++;
                 }
-            } else {
-                Elements lis = doc.select("ul.treeview>li");
-
-                List<ZBean> zBeans = new ArrayList<ZBean>();
-                int i = 1;
-                for (Element li : lis) {
-                    String zhText = li.select("li>a").first().text();
-                    String zpk = li.select("li>a[pk$=~]").first().attr("pk");
-                    Elements lis2 = li.select("li>a[pk$=~]:contains(章)+ul>li");
-                    System.out.println(zpk + "-------章节---------" + zhText);
-
-                    ZBean zBean = new ZBean();
-                    zBean.setName(zhText);
-                    zBean.setPk(zpk);
-
-                    String id = String.format("G%02d", i);
-
-                    int level = 1;
-                    int knowledgeTag = 0;
-
-                    Chapter chapter = new Chapter();
-                    chapter.setId(id);
-                    chapter.setRelateBookId(relateBookId);
-                    chapter.setName(zhText);
-                    chapter.setLevel(level);
-                    chapter.setPk(zpk);
-                    chapter.setKnowledgeTag(knowledgeTag);
-                    chapterDao.add(chapter);
-
-
-                    int j = 1;
-                    for (Element element : lis2) {
-                        String pk = element.select("li>a").attr("pk");
-                        String name = element.select("li>a").first().text();
-
-                        JBean jBean = new JBean();
-                        jBean.setPk(pk);
-                        jBean.setName(name);
-
-                        id = String.format("G%02d", i) + String.format(".%02d", j);
-
-                        level = 2;
-                        knowledgeTag = 0;
-
-                        chapter = new Chapter();
-                        chapter.setId(id);
-                        chapter.setRelateBookId(relateBookId);
-                        chapter.setName(name);
-                        chapter.setLevel(level);
-                        chapter.setPk(pk);
-                        chapter.setKnowledgeTag(knowledgeTag);
-                        chapterDao.add(chapter);
-
-                        System.out.println(pk + "------节点------" + name);
-                        Elements lis3 = element.select("li>a:contains(节)+ul>li");
-                        int k = 1;
-                        for (Element element1 : lis3) {
-                            String pk1 = element1.select("li>a").attr("pk");
-                            String zname = element1.select("li>a").first().text();
-                            if (pk1.endsWith("~")) {
-
-                                Elements as3 = element1.select("li>ul>li>a");
-                                System.out.println(pk1 + "------二级节点------" + zname);
-
-                                JBean jBean2 = new JBean();
-                                jBean2.setPk(pk1);
-                                jBean2.setName(zname);
-
-                                id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k);
-
-                                level = 3;
-                                knowledgeTag = 0;
-
-                                chapter = new Chapter();
-                                chapter.setId(id);
-                                chapter.setRelateBookId(relateBookId);
-                                chapter.setName(zname);
-                                chapter.setLevel(level);
-                                chapter.setPk(pk1);
-                                chapter.setKnowledgeTag(knowledgeTag);
-                                chapterDao.add(chapter);
-
-                                int n = 1;
-                                for (Element element2 : as3) {
-                                    String pk2 = element2.attr("pk");
-                                    String name2 = element2.text();
-
-                                    if ("1Z：合数分解质因数".equals(name2)) {
-                                        System.out.println("bbbbbbbbbbbbbb" + name2);
-                                    }
-
-                                    System.out.println(pk2 + "------知识点-------" + name2);
-
-                                    ZSBean zsBean = new ZSBean();
-                                    zsBean.setPk(pk2);
-                                    zsBean.setName(name2);
-                                    jBean2.addZsBean(zsBean);
-
-                                    id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k) + String.format(".%02d", n);
-
-                                    level = 4;
-                                    knowledgeTag = 1;
-
-                                    chapter = new Chapter();
-                                    chapter.setId(id);
-                                    chapter.setRelateBookId(relateBookId);
-                                    chapter.setName(name2);
-                                    chapter.setLevel(level);
-                                    chapter.setPk(pk2);
-                                    chapter.setKnowledgeTag(knowledgeTag);
-                                    chapterDao.add(chapter);
-
-                                    String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
-                                    String nUrl = uri + "partialques?q=" + pk2;
-                                    n++;
-//                               page.addTargetRequest(nUrl);
-                                }
-                                jBean.addJBeans2(jBean2);
-                            } else {
-
-                                if ("1Z：合数分解质因数".equals(zname)) {
-                                    System.out.println("aaaaaaaaaaaaaaa" + zname);
-                                }
-
-                                System.out.println(pk1 + "------知识点------" + zname);
-                                ZSBean zsBean = new ZSBean();
-                                zsBean.setPk(pk1);
-                                zsBean.setName(zname);
-
-                                jBean.addZsBean(zsBean);
-
-                                id = String.format("G%02d", i) + String.format(".%02d", j) + String.format(".%02d", k);
-                                level = 3;
-                                knowledgeTag = 1;
-
-                                chapter = new Chapter();
-                                chapter.setId(id);
-                                chapter.setRelateBookId(relateBookId);
-                                chapter.setName(zname);
-                                chapter.setLevel(level);
-                                chapter.setPk(pk1);
-                                chapter.setKnowledgeTag(knowledgeTag);
-                                chapterDao.add(chapter);
-
-                                String uri = page.getUrl().regex("http://www.jyeoo.com/.*?/ques/").get();
-                                String nUrl = uri + "partialques?q=" + pk1;
-//                            page.addTargetRequest(nUrl);
-                            }
-
-                            k++;
-                        }
-                        zBean.addJbean(jBean);
-                        j++;
-                    }
-                    zBeans.add(zBean);
-
-                    i++;
-                }
-                System.out.println(zBeans);
-
-                String jsonStr = JsonUtils.obj2Str(zBeans);
-                System.out.println(jsonStr);
             }
-
 
         }
         if (url.matches("http://www.jyeoo.com/.*?/ques/partialques.*")) {
@@ -376,7 +214,7 @@ public class JyProcess implements PageProcessor {
 //        url = "http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
 
 //        url="http://www.jyeoo.com/math3/ques/partialcategory?a=b9f9287f-8348-4b95-8c06-8bdcfc559928&q=b9f9287f-8348-4b95-8c06-8bdcfc559928~f1483a4d-66cd-4fb9-8ca4-68a0d7ddc7d7~&f=0&r=0.2692786993780121";
-         url="http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
+//         url="http://www.jyeoo.com/english/ques/partialcategory?a=undefined&q=1&f=1";
 
         Spider
                 .create(new JyProcess())
