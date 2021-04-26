@@ -492,7 +492,7 @@ public class Process2 implements PageProcessor {
 //        url="http://www.jyeoo.com/geography2/ques/search"; //高中地理   没有年级
 //        url="http://www.jyeoo.com/english2/ques/search"; //高中英语 结构不一样
 //        url="http://www.jyeoo.com/chinese2/ques/search"; //高中语文 结构不一样
-        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
+//        url="http://www.jyeoo.com/politics2/ques/search"; //高中政治
 //        url="http://www.jyeoo.com/history2/ques/search"; //高中历史
 //        url="http://www.jyeoo.com/math3/ques/search"; //小学数学
 
