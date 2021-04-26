@@ -1,4 +1,4 @@
-package com.jk.data.com.jk.data.util;
+package com.jk.data.util;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -28,4 +28,19 @@ public class RedisUtils {
         resource.lpush(Key, value);
         resource.close();
     }
+
+    public static void  set(String  key,String  value){
+        Jedis resource = jedisPool.getResource();
+        resource.set(key,value);
+        resource.close();
+    }
+
+    public static String  get(String  key){
+        Jedis resource = jedisPool.getResource();
+        String s = resource.get(key);
+        resource.close();
+        return s;
+    }
+
+
 }

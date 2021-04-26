@@ -2,7 +2,7 @@ package com.jk.data.process;
 
 import com.jk.data.bean.TObject;
 import com.jk.data.bean.TikuKonwBean;
-import com.jk.data.com.jk.data.util.JsonUtils;
+import com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.AppUtils;
 import com.jk.data.mybatis.bean.TiKuTermCourse;
 import com.jk.data.mybatis.bean.TikuKnowNum;

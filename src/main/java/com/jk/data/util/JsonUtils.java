@@ -1,4 +1,4 @@
-package com.jk.data.com.jk.data.util;
+package com.jk.data.util;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;

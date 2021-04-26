@@ -1,9 +1,5 @@
 package com.jk.data.process;
 
-import com.jk.data.bean.JBean;
-import com.jk.data.bean.ZBean;
-import com.jk.data.bean.ZSBean;
-import com.jk.data.com.jk.data.util.JsonUtils;
 import com.jk.data.mybatis.AppUtils;
 import com.jk.data.mybatis.bean.*;
 import com.jk.data.mybatis.dao.*;

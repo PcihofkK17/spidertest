@@ -1,7 +1,7 @@
 package com.jk.data.process;
 
-import com.jk.data.com.jk.data.util.RedisUtils;
-import com.jk.data.com.jk.data.util.ThreadUtil;
+import com.jk.data.util.RedisUtils;
+import com.jk.data.util.ThreadUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;

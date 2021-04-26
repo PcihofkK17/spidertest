@@ -1,4 +1,4 @@
-package com.jk.data.com.jk.data.util;
+package com.jk.data.util;
 
 /**
  * Created by 76204 on 2017/7/10.

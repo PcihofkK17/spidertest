@@ -1,3 +1,6 @@
+import com.jk.data.mybatis.AppUtils;
+import com.jk.data.mybatis.bean.QuestLabelWord;
+import com.jk.data.mybatis.dao.QuestLabelWordDao;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -8,17 +11,25 @@ import java.util.*;
  * Created by 76204 on 2017/7/3.
  */
 public class IOTest {
-    public static void main(String[] args) {
-        try {
-            List<String> lines = FileUtils.readLines(new File("c:/cjh/word.txt"),"utf-8");
-            Set<String > set=new HashSet<>();
-            set.addAll(lines);
-            for (String each : set) {
-                System.out.println(each);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void main(String[] args) throws IOException {
+        List<String> lines = FileUtils.readLines(new File("./test.txt"), "utf-8");
+
+        QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
+
+
+        for (String line : lines) {
+            String[] datas = line.split("\t");
+            String id = datas[0];
+            String name = datas[1];
+            String type = datas[2];
+            QuestLabelWord questLabelWord = new QuestLabelWord();
+            questLabelWord.setType(type);
+            questLabelWord.setId(id);
+            questLabelWord.setName(name);
+
+            questLabelWordDao.add(questLabelWord);
         }
+
     }
 
     private static Map<String, String> readDic() {

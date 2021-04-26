@@ -1,6 +1,5 @@
-package com.jk.data.com.jk.data.util;
+package com.jk.data.util;
 
-import com.google.common.io.FileBackedOutputStream;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;

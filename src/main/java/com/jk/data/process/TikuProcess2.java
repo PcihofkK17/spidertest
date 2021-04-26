@@ -1,6 +1,6 @@
 package com.jk.data.process;
 
-import com.jk.data.com.jk.data.util.MyFileUtils;
+import com.jk.data.util.MyFileUtils;
 import com.jk.data.mybatis.AppUtils;
 import com.jk.data.mybatis.bean.QuestLabelWord;
 import com.jk.data.mybatis.bean.RbookQuest;
