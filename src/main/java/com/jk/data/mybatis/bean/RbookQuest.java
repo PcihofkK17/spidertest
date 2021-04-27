@@ -6,6 +6,16 @@ package com.jk.data.mybatis.bean;
 public class RbookQuest {
     private String  relateBookId;
     private String  qid;
+    private String  value;
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+
+        return value;
+    }
 
     public String getRelateBookId() {
         return relateBookId;
@@ -28,6 +38,7 @@ public class RbookQuest {
         return "RbookQuest{" +
                 "relateBookId='" + relateBookId + '\'' +
                 ", qid='" + qid + '\'' +
+                ", value='" + value + '\'' +
                 '}';
     }
 }

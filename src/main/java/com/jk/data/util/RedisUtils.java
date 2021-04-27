@@ -42,5 +42,23 @@ public class RedisUtils {
         return s;
     }
 
+    public static void hmSet(String key,String  field,String value){
+        Jedis resource = jedisPool.getResource();
+        resource.hset(key,field,value);
+        resource.close();
+    }
+    public static String hmGet(String key,String  field){
+        Jedis resource = jedisPool.getResource();
+        String value = resource.hget(key, field);
+        resource.close();
+        return  value;
+    }
+
+
+    public static void main(String[] args) {
+        RedisUtils.hmSet("test","a","b");
+        RedisUtils.hmSet("test","a","c");
+        System.out.println(RedisUtils.hmGet("test","a"));
+    }
 
 }

@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Insert;
  * Created by 76204 on 2017/7/7.
  */
 public interface RbookQuestDao {
-    @Insert("insert ignore  into relateBook_quest (`relateBookId`,`qid`) values (#{relateBookId},#{qid})")
+        @Insert("insert ignore  into relateBook_quest (`relateBookId`,`qid`,`value`) values (#{relateBookId},#{qid},#{value})")
     public int add(RbookQuest rbookQuest);
 }
