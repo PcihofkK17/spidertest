@@ -28,9 +28,6 @@ public class ChapterTranse {
             Integer   knowledgeTag1=null;
 
 
-
-
-
             id1.insert(0,String.format("%02d.",chapter_zujuan.getSortNum()));
 
             if(pid==null){
