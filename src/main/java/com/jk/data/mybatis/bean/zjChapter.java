@@ -3,7 +3,7 @@ package com.jk.data.mybatis.bean;
 /**
  * Created by 76204 on 2017/7/15.
  */
-public class Chapter_zujuan {
+public class zjChapter {
     private String id;
     private String  relateBookId;
     private String  name;
@@ -11,26 +11,7 @@ public class Chapter_zujuan {
     private Integer  knowledgeTag;
     private Integer sortNum;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setRelateBookId(String relateBookId) {
-        this.relateBookId = relateBookId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
-
-
-
     public String getId() {
-
         return id;
     }
 
@@ -50,13 +31,37 @@ public class Chapter_zujuan {
         return knowledgeTag;
     }
 
+    public Integer getSortNum() {
+        return sortNum;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setRelateBookId(String relateBookId) {
+        this.relateBookId = relateBookId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
     public void setKnowledgeTag(Integer knowledgeTag) {
         this.knowledgeTag = knowledgeTag;
     }
 
+    public void setSortNum(Integer sortNum) {
+        this.sortNum = sortNum;
+    }
+
     @Override
     public String toString() {
-        return "Chapter_zujuan{" +
+        return "zjChapter{" +
                 "id='" + id + '\'' +
                 ", relateBookId='" + relateBookId + '\'' +
                 ", name='" + name + '\'' +
@@ -64,14 +69,5 @@ public class Chapter_zujuan {
                 ", knowledgeTag=" + knowledgeTag +
                 ", sortNum=" + sortNum +
                 '}';
-    }
-
-    public void setSortNum(Integer sortNum) {
-        this.sortNum = sortNum;
-    }
-
-    public Integer getSortNum() {
-
-        return sortNum;
     }
 }

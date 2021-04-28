@@ -1,8 +1,7 @@
 package com.jk.data.process;
 
-import com.jk.data.bean.DicBean;
 import com.jk.data.mybatis.AppUtils;
-import com.jk.data.mybatis.bean.Chapter_zujuan;
+import com.jk.data.mybatis.bean.zjChapter;
 import com.jk.data.mybatis.bean.QuestLabelWord;
 import com.jk.data.mybatis.bean.RbookQuest;
 import com.jk.data.mybatis.bean.RelateBook;
@@ -284,7 +283,7 @@ public class ZujuanProcess implements PageProcessor {
                 RedisUtils.hmSet("chap_rbook",catid,id); //kv 缓存
 
 
-                Chapter_zujuan chapter=new Chapter_zujuan();
+                zjChapter chapter=new zjChapter();
                 chapter.setId(catid);
                 chapter.setKnowledgeTag(0);
                 chapter.setName(name);
@@ -315,7 +314,7 @@ public class ZujuanProcess implements PageProcessor {
                 }
 
                 //章节入库
-                Chapter_zujuan chapter=new Chapter_zujuan();
+                zjChapter chapter=new zjChapter();
                 chapter.setId(id.toString());
                 chapter.setKnowledgeTag(hasChild==false ? 1:0);
                 chapter.setName(title.toString());

@@ -1,7 +1,6 @@
 package com.jk.data.mybatis.dao;
 
-import com.jk.data.mybatis.bean.Chapter;
-import com.jk.data.mybatis.bean.Chapter_zujuan;
+import com.jk.data.mybatis.bean.zjChapter;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
@@ -12,11 +11,11 @@ import java.util.List;
  */
 public interface Chapter_zujianDao {
     @Insert("insert ignore  into chapter_zujuan (`id`,`relateBookId`,`name`,`pid`,`knowledgeTag`,`sortNum`) values (#{id},#{relateBookId},#{name},#{pid},#{knowledgeTag},#{sortNum})")
-    public int add(Chapter_zujuan chapter);
+    public int add(zjChapter chapter);
 
     @Select("Select * from chapter_zujuan")
-    public List<Chapter_zujuan> getAll();
+    public List<zjChapter> getAll();
 
     @Select("Select * from chapter_zujuan  where id=#{pid}")
-    public Chapter_zujuan  getByPid(String  pid);
+    public zjChapter getByPid(String  pid);
 }

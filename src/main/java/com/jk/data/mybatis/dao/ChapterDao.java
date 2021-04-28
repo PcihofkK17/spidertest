@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Insert;
  * Created by 76204 on 2017/7/4.
  */
 public interface ChapterDao {
-    @Insert("insert ignore  into chapter2 (`id`,`relateBookId`,`name`,`level`,`pk`,`knowledgeTag`) values (#{id},#{relateBookId},#{name},#{level},#{pk},#{knowledgeTag})")
+    @Insert("insert ignore  into chapter (`id`,`relateBookId`,`name`,`level`,`pk`,`knowledgeTag`) values (#{id},#{relateBookId},#{name},#{level},#{pk},#{knowledgeTag})")
     public int add(Chapter chapter);
 }
