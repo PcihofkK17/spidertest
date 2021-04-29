@@ -64,14 +64,17 @@ public class ChapterTranse {
             Chapter chapter = new Chapter();
             chapter.setKnowledgeTag(knowledgeTag);
             chapter.setId(id1.insert(0,"G").substring(0,id1.length()-1));
-            chapter.setRelateBookId(relateBookId);
+            chapter.setRelateBookId(relateBookId.replaceAll("([B-Z])","|$1"));
             chapter.setName(name);
             chapter.setLevel(level);
             chapter.setPk(id);
 
+//            System.out.println(relateBookId.replaceAll("([B-Z])","|$1")+"-----");
             if(relateBookId!=null || !relateBookId.isEmpty()){
                 chapterDao.add(chapter);
                 logger.info("-------入库---------"+id);
+
+                logger.info(chapter);
             }else{
                 logger.info("------漏掉------"+id);
             }

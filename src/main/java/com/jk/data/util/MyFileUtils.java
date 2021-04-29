@@ -22,6 +22,6 @@ public class MyFileUtils {
     }
 
       public static void main(String[] args) {
-              MyFileUtils.writer("c:/cjh/test.txt","aa",true);
+              MyFileUtils.writer("c:/cjh/questlabelword.txt","aa",true);
         }
 }

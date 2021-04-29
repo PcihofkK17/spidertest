@@ -94,7 +94,7 @@ public class ZujuanProcess implements PageProcessor {
                     String href = a.links().all().get(0);
                     String  rKey=null;
                     if(type.contains("教材")){
-                        page.addTargetRequest(href);
+//                        page.addTargetRequest(href);
                         rKey="jiaocai";
                     }else{
                         rKey="nianji";
@@ -122,6 +122,7 @@ public class ZujuanProcess implements PageProcessor {
             }
 
             //小选项收集
+            String  relatebookId=null;
             List<Selectable> divs = page.getHtml().xpath("//div[@class='tag-type']/div[@class='tag-items']").nodes();
             for (Selectable div : divs) {
                 String type = div.xpath("//div[@class='tag-tit']/text()").get();
@@ -150,19 +151,38 @@ public class ZujuanProcess implements PageProcessor {
                         String bValue = myDic.get(RedisUtils.hmGet("B", xd));
                         String cValue = myDic.get(RedisUtils.hmGet("C", chid));
 
-                        String  rbid=aValue+bValue+cValue;
+                        relatebookId=aValue+"|"+bValue+"|"+cValue;
                         String qid = myDic.get(name);
 
                         RbookQuest rbookQuest = new RbookQuest();
-                        rbookQuest.setRelateBookId(rbid);
+                        rbookQuest.setRelateBookId(relatebookId);
                         rbookQuest.setQid(qid);
                         rbookQuest.setValue(data_value);
-                        if(rbid.contains("null")){
-                            logger.error(url+"----rbid漏掉-----"+rbid);
+                        if(relatebookId.contains("null")){
+                            logger.error(url+"----rbid漏掉-----"+relatebookId);
                         }else{
                             rbookQuestDao.add(rbookQuest);
                         }
                     }
+                }
+            }
+
+            //适用年级
+            List<Selectable> boxes = page.getHtml().xpath("//div[@id='J_Nj']/span[@class='checkbox checked']").nodes();
+            for (Selectable box : boxes) {
+                String value = box.xpath("/span/input/@value").get();
+                String name = box.xpath("/span/text()").get().trim();
+                String code = myDic.get(name);
+                logger.info("适用年级::::"+name+"----"+code+"------"+value);
+
+                RbookQuest rbookQuest = new RbookQuest();
+                rbookQuest.setRelateBookId(relatebookId);
+                rbookQuest.setQid(code);
+                rbookQuest.setValue(value);
+                if(relatebookId.contains("null")){
+                    logger.error(url+"----rbid漏掉-----"+relatebookId);
+                }else{
+                    rbookQuestDao.add(rbookQuest);
                 }
             }
 
@@ -251,7 +271,7 @@ public class ZujuanProcess implements PageProcessor {
 //                termId="E00";
 //            }
 
-            id = siteId + gradeId + courseId + branchId + termId + bookId;
+            id = siteId +"|"+ gradeId +"|"+ courseId +"|"+ branchId +"|"+ termId +"|"+ bookId;
             if(id.contains("null")){
                 logger.error(url+"---relatebookid error:::::"+id);
                 return;

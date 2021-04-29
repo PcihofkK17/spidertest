@@ -10,9 +10,9 @@ import java.util.*;
 /**
  * Created by 76204 on 2017/7/3.
  */
-public class IOTest {
+public class QuestLoabelwordInput {
     public static void main(String[] args) throws IOException {
-        List<String> lines = FileUtils.readLines(new File("./test.txt"), "utf-8");
+        List<String> lines = FileUtils.readLines(new File("./questlabelword.txt"), "utf-8");
 
         QuestLabelWordDao questLabelWordDao = AppUtils.daoFactory(QuestLabelWordDao.class);
 
